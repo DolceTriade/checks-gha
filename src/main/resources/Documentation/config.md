@@ -1,0 +1,2 @@
+GHA Checks Configuration
+============================
