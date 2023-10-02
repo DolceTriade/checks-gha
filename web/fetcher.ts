@@ -49,18 +49,17 @@ export class ChecksFetcher implements ChecksProvider {
 
   async fetch(data: ChangeData) {
     const checkRuns: CheckRun[] = [];
-    if (this.runs === null) {
-      await this.plugin.restApi().get<WorkflowRun[]>(
-        `/changes/${data.changeInfo.id}/revisions/${data.patchsetSha}/checks`
-      ).then(result => {
-        this.runs = result;
-      }).catch(reason => {
-        throw reason;
-      });
-    }
+    await this.plugin.restApi().get<WorkflowRun[]>(
+      `/changes/${data.changeInfo.id}/revisions/${data.patchsetSha}/checks`
+    ).then(result => {
+      this.runs = result;
+    }).catch(reason => {
+      throw reason;
+    });
     if (this.runs !== null) {
       this.runs.forEach(run => {
         checkRuns.push({
+          patchset: data.patchsetNumber,
           attempt: run.run_attempt,
           checkName: run.name,
           checkDescription: run.title,
