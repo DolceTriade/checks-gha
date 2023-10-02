@@ -20,6 +20,7 @@ public interface GitHub {
         String name;
         String title;
         String url;
+        String statusUrl;
         String conclusion;
         String status;
         long runAttempt;

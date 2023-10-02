@@ -21,7 +21,8 @@ import {
   ResponseCode,
   RunStatus,
   CheckResult,
-  Category
+  Category,
+  LinkIcon
 } from '@gerritcodereview/typescript-api/checks';
 import { PluginApi } from '@gerritcodereview/typescript-api/plugin';
 
@@ -32,7 +33,8 @@ export declare interface WorkflowRun {
   conclusion: string;
   status: string;
   run_attempt: number;
-  runNumber: number;
+  run_number: number;
+  status_url: string;
 }
 
 export class ChecksFetcher implements ChecksProvider {
@@ -64,7 +66,8 @@ export class ChecksFetcher implements ChecksProvider {
           checkDescription: run.title,
           checkLink: run.url,
           status: this.convertStatus(run.status),
-          results: this.convertResult(run.conclusion),
+          statusLink: run.status_url,
+          results: this.convertResult(run.conclusion, run.url),
         });
       });
     }
@@ -83,10 +86,15 @@ export class ChecksFetcher implements ChecksProvider {
     return v === undefined ? RunStatus.RUNNABLE : v;
   }
 
-  convertResult(conclusion: string): CheckResult[] {
+  convertResult(conclusion: string, url: string): CheckResult[] {
     return [{
       category: conclusion === 'SUCCESS' ? Category.SUCCESS : Category.ERROR,
       summary: conclusion,
+      links: [{
+        icon: LinkIcon.HELP_PAGE,
+        primary: true,
+        url: url,
+      }],
     }];
 
   }

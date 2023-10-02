@@ -76,10 +76,11 @@ class GitHubImpl implements GitHub {
                 wfRun.name = run.getName();
                 wfRun.title = run.getDisplayTitle();
                 try {
-                    wfRun.url = run.getHtmlUrl().toString();
+                    wfRun.statusUrl = run.getHtmlUrl().toString();
                 } catch (IOException e) {
-                    wfRun.url = run.getUrl().toString();
+                    wfRun.statusUrl = run.getUrl().toString();
                 }
+                wfRun.url = run.getUrl().toString();
                 if (run.getConclusion() != null) {
                     wfRun.conclusion = run.getConclusion().name();
                 }
