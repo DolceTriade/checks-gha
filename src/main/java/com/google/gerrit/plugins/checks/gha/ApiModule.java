@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.gerrit.plugins.checks.jenkins;
+package com.google.gerrit.plugins.checks.gha;
 
+import static com.google.gerrit.server.change.RevisionResource.REVISION_KIND;
 import static com.google.gerrit.server.project.ProjectResource.PROJECT_KIND;
 
 import com.google.gerrit.extensions.restapi.RestApiModule;
@@ -21,6 +22,7 @@ import com.google.gerrit.extensions.restapi.RestApiModule;
 public class ApiModule extends RestApiModule {
   @Override
   protected void configure() {
-    get(PROJECT_KIND, "config").to(GetConfig.class);
+    bind(GitHub.class).to(GitHubImpl.class);
+    get(REVISION_KIND, "checks").to(GetChecks.class);
   }
 }

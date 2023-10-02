@@ -10,6 +10,7 @@ package(default_visibility = [":visibility"])
 gerrit_plugin(
     name = "checks-gha",
     srcs = glob(["src/main/java/com/google/gerrit/plugins/checks/gha/**/*.java"]),
+    deps = ["@org_kohsuke_github_api//jar:jar"],
     manifest_entries = [
         "Gerrit-PluginName: checks-gha",
         "Gerrit-Module: com.google.gerrit.plugins.checks.gha.ApiModule",

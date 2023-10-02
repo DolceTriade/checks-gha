@@ -2,7 +2,7 @@
   "extends": "../../tsconfig-plugins-base.json",
   "compilerOptions": {
     /* outDir for IDE (overridden by Bazel rule arg) */
-    "outDir": "../../../.ts-out/plugins/checks-jenkins/web",
+    "outDir": "../../../.ts-out/plugins/checks-gha/web",
   },
   "include": [
     "**/*"

@@ -11,18 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.google.gerrit.plugins.checks.gha;
 
-import com.google.gerrit.extensions.registration.DynamicSet;
-import com.google.gerrit.extensions.webui.JavaScriptPlugin;
-import com.google.gerrit.extensions.webui.WebUiPlugin;
-import com.google.inject.servlet.ServletModule;
+import java.io.IOException;
 
-public class HttpModule extends ServletModule {
-  @Override
-  protected void configureServlets() {
-    DynamicSet.bind(binder(), WebUiPlugin.class)
-        .toInstance(new JavaScriptPlugin("checks-gha.js"));
-  }
+public interface GitHub {
+    public static class WorkflowRun {
+        String name;
+        String title;
+        String url;
+        String conclusion;
+        String status;
+        long runAttempt;
+        long runNumber;
+    }
+
+    WorkflowRun[] GetWorkflowRuns(String repo, String branch) throws IOException;
 }

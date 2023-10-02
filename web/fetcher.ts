@@ -19,20 +19,75 @@ import {
   CheckRun,
   ChecksProvider,
   ResponseCode,
+  RunStatus,
+  CheckResult,
+  Category
 } from '@gerritcodereview/typescript-api/checks';
-import {PluginApi} from '@gerritcodereview/typescript-api/plugin';
+import { PluginApi } from '@gerritcodereview/typescript-api/plugin';
+
+export declare interface WorkflowRun {
+  name: string;
+  title: string;
+  url: string;
+  conclusion: string;
+  status: string;
+  run_attempt: number;
+  runNumber: number;
+}
 
 export class ChecksFetcher implements ChecksProvider {
+  private plugin: PluginApi;
 
-  constructor(_: PluginApi) {
+  runs: WorkflowRun[] | null;
+
+  constructor(pluginApi: PluginApi) {
+    this.plugin = pluginApi;
+    this.runs = null;
   }
 
-  async fetch(_: ChangeData) {
-
+  async fetch(data: ChangeData) {
     const checkRuns: CheckRun[] = [];
+    if (this.runs === null) {
+      await this.plugin.restApi().get<WorkflowRun[]>(
+        `/changes/${data.changeInfo.id}/revisions/${data.patchsetSha}/checks`
+      ).then(result => {
+        this.runs = result;
+      }).catch(reason => {
+        throw reason;
+      });
+    }
+    if (this.runs !== null) {
+      this.runs.forEach(run => {
+        checkRuns.push({
+          attempt: run.run_attempt,
+          checkName: run.name,
+          checkDescription: run.title,
+          checkLink: run.url,
+          status: this.convertStatus(run.status),
+          results: this.convertResult(run.conclusion),
+        });
+      });
+    }
     return {
       responseCode: ResponseCode.OK,
       runs: checkRuns,
     };
+  }
+
+  convertStatus(s: string): RunStatus {
+    let v = {
+      'QUEUED': RunStatus.SCHEDULED,
+      'IN_PROGRESS': RunStatus.RUNNING,
+      'COMPLETED': RunStatus.COMPLETED
+    }[s];
+    return v === undefined ? RunStatus.RUNNABLE : v;
+  }
+
+  convertResult(conclusion: string): CheckResult[] {
+    return [{
+      category: conclusion === 'SUCCESS' ? Category.SUCCESS : Category.ERROR,
+      summary: conclusion,
+    }];
+
   }
 }

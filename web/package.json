@@ -1,6 +1,6 @@
 {
-  "name": "checks-jenkins",
-  "description": "Checks-Jenkins plugin",
+  "name": "checks-gha",
+  "description": "Checks-GHA plugin",
   "browser": true,
   "scripts": {
     "safe_bazelisk": "if which bazelisk >/dev/null; then bazel_bin=bazelisk; else bazel_bin=bazel; fi && $bazel_bin",
