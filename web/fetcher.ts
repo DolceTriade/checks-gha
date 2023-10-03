@@ -40,24 +40,16 @@ export declare interface WorkflowRun {
 export class ChecksFetcher implements ChecksProvider {
   private plugin: PluginApi;
 
-  runs: WorkflowRun[] | null;
-
   constructor(pluginApi: PluginApi) {
     this.plugin = pluginApi;
-    this.runs = null;
   }
 
   async fetch(data: ChangeData) {
-    const checkRuns: CheckRun[] = [];
+    let checkRuns: CheckRun[] = [];
     await this.plugin.restApi().get<WorkflowRun[]>(
       `/changes/${data.changeInfo.id}/revisions/${data.patchsetSha}/checks`
     ).then(result => {
-      this.runs = result;
-    }).catch(reason => {
-      throw reason;
-    });
-    if (this.runs !== null) {
-      this.runs.forEach(run => {
+      result.forEach(run => {
         checkRuns.push({
           patchset: data.patchsetNumber,
           attempt: run.run_attempt,
@@ -69,7 +61,9 @@ export class ChecksFetcher implements ChecksProvider {
           results: this.convertResult(run.conclusion, run.url),
         });
       });
-    }
+    }).catch(reason => {
+      throw reason;
+    });
     return {
       responseCode: ResponseCode.OK,
       runs: checkRuns,
