@@ -80,6 +80,10 @@ export class ChecksFetcher implements ChecksProvider {
   }
 
   convertResult(conclusion: string, url: string): CheckResult[] {
+    console.log(conclusion, url);
+    if (!conclusion || conclusion.length == 0) {
+      return [];
+    }
     return [{
       category: conclusion === 'SUCCESS' ? Category.SUCCESS : Category.ERROR,
       summary: conclusion,
