@@ -26,4 +26,7 @@ gerrit_plugin(
     ],
     resource_jars = ["//plugins/checks-gha/web:checks-gha"],
     resources = glob(["src/main/resources/**/*"]),
+    deps = [
+        "//plugins/checks-gha/third_party:external_jars",
+    ],
 )
